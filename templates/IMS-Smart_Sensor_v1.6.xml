@@ -1,0 +1,1713 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-08-16T09:10:01Z</date>
+    <groups>
+        <group>
+            <name>IntelliMon</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>IMS-Smart Sensor v1.6</template>
+            <name>IMS-Smart Sensor v1.6</name>
+            <description>Template for wireless IntelliMon sensor, firmware 1.6.</description>
+            <groups>
+                <group>
+                    <name>IntelliMon</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Device info</name>
+                </application>
+                <application>
+                    <name>Fails</name>
+                </application>
+                <application>
+                    <name>Sensor availability</name>
+                </application>
+                <application>
+                    <name>Sensor data</name>
+                </application>
+                <application>
+                    <name>Stats</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Battery charge [%]</name>
+                    <type>DEPENDENT</type>
+                    <key>batterycharge</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>Battery charge in percent.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.batterycharge</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;15</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{last()}&gt;20</recovery_expression>
+                            <name>[{HOST.NAME}] - Sensor: Battery charge low [&lt;15%]</name>
+                            <priority>HIGH</priority>
+                            <description>Battery charge below 15%.</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                        <trigger>
+                            <expression>{last()}&lt;30</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{last()}&gt;35</recovery_expression>
+                            <name>[{HOST.NAME}] - Sensor: Battery charge low [&lt;30%]</name>
+                            <priority>WARNING</priority>
+                            <description>Battery charge below 30%.</description>
+                            <manual_close>YES</manual_close>
+                            <dependencies>
+                                <dependency>
+                                    <name>[{HOST.NAME}] - Sensor: Battery charge low [&lt;15%]</name>
+                                    <expression>{IMS-Smart Sensor v1.6:batterycharge.last()}&lt;15</expression>
+                                    <recovery_expression>{IMS-Smart Sensor v1.6:batterycharge.last()}&gt;20</recovery_expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{last()}&lt;50</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{last()}&gt;55</recovery_expression>
+                            <name>[{HOST.NAME}] - Sensor: Battery charge low [&lt;50%]</name>
+                            <priority>INFO</priority>
+                            <description>Battery charge below 50%.</description>
+                            <manual_close>YES</manual_close>
+                            <dependencies>
+                                <dependency>
+                                    <name>[{HOST.NAME}] - Sensor: Battery charge low [&lt;30%]</name>
+                                    <expression>{IMS-Smart Sensor v1.6:batterycharge.last()}&lt;30</expression>
+                                    <recovery_expression>{IMS-Smart Sensor v1.6:batterycharge.last()}&gt;35</recovery_expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Fails: Connection</name>
+                    <type>DEPENDENT</type>
+                    <key>cfails</key>
+                    <delay>0</delay>
+                    <description>Failed connection attempts.</description>
+                    <applications>
+                        <application>
+                            <name>Fails</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.cfails</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Contact</name>
+                    <type>DEPENDENT</type>
+                    <key>contact</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>Contact information.</description>
+                    <applications>
+                        <application>
+                            <name>Device info</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.contact</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Device type</name>
+                    <type>DEPENDENT</type>
+                    <key>devicetype</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>The type of the device.</description>
+                    <applications>
+                        <application>
+                            <name>Device info</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.devicetype</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Dew point [C]</name>
+                    <type>DEPENDENT</type>
+                    <key>dew</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>C</units>
+                    <description>Calculated dew point in degrees Celsius.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.dew</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Equivalent carbon-dioxide eCO2 [ppm]</name>
+                    <type>DEPENDENT</type>
+                    <key>eco2</key>
+                    <delay>0</delay>
+                    <units>ppm</units>
+                    <description>eCO2 (equivalent calculated carbon-dioxide) concentration within a range of 400 to 8192 parts per million (ppm).</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.eco2</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Error: Environment sensor</name>
+                    <type>DEPENDENT</type>
+                    <key>enverror</key>
+                    <delay>0</delay>
+                    <description>Number of failed environment sensor readings.</description>
+                    <applications>
+                        <application>
+                            <name>Fails</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.enverror</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Geo latitude</name>
+                    <type>DEPENDENT</type>
+                    <key>geolatitude</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>Latitude of the device location.</description>
+                    <inventory_link>LOCATION_LAT</inventory_link>
+                    <applications>
+                        <application>
+                            <name>Device info</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.geolatitude</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Geo longitude</name>
+                    <type>DEPENDENT</type>
+                    <key>geolongitude</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>Longitude of the device location.</description>
+                    <inventory_link>LOCATION_LON</inventory_link>
+                    <applications>
+                        <application>
+                            <name>Device info</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.geolongitude</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Found: Environment sensor</name>
+                    <type>DEPENDENT</type>
+                    <key>hasenv</key>
+                    <delay>0</delay>
+                    <description>Environment sensor found.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor availability</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.hasenv</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Found: IAQ sensor</name>
+                    <type>DEPENDENT</type>
+                    <key>hasiaq</key>
+                    <delay>0</delay>
+                    <description>IAQ sensor found.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor availability</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.hasiaq</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Found: External temperature sensor</name>
+                    <type>DEPENDENT</type>
+                    <key>hastempe</key>
+                    <delay>0</delay>
+                    <description>External temp sensor found.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor availability</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.hastempe</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Humidity [%]</name>
+                    <type>DEPENDENT</type>
+                    <key>hum</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>Air humidity in percent.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.hum</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>IAQ baseline</name>
+                    <type>DEPENDENT</type>
+                    <key>iaqbaseline</key>
+                    <delay>0</delay>
+                    <description>IAQ baseline after last measurement.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.iaqbaseline</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>IAQ disabled</name>
+                    <type>DEPENDENT</type>
+                    <key>iaqdisabled</key>
+                    <delay>0</delay>
+                    <description>IAQ sensor status.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>IMS-Smart-IAQStatus</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.iaqdisabled</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Error: IAQ</name>
+                    <type>DEPENDENT</type>
+                    <key>iaqerror</key>
+                    <delay>0</delay>
+                    <description>Status of IAQ sensor reading.</description>
+                    <applications>
+                        <application>
+                            <name>Fails</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>IMS-Smart-IAQError</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.iaqerror</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Error: IAQ details</name>
+                    <type>DEPENDENT</type>
+                    <key>iaqerrorstatus</key>
+                    <delay>0</delay>
+                    <description>Status of internal sensor reading. Only useful if iaderror is &gt; 0.</description>
+                    <applications>
+                        <application>
+                            <name>Fails</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>IMS-Smart-IAQErrorStatus</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.iaqerrorstatus</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>IAQ heating time [sec]</name>
+                    <type>DEPENDENT</type>
+                    <key>iaqheatingtime</key>
+                    <delay>0</delay>
+                    <units>!sec</units>
+                    <description>Time to heat-up the IAQ sensor before a valid measurement can be taken. Changes to this values have a strong impact on iad readings and battery lifetime.</description>
+                    <applications>
+                        <application>
+                            <name>Stats</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.iaqheatingtime</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Measurement interval</name>
+                    <type>DEPENDENT</type>
+                    <key>interval</key>
+                    <delay>0</delay>
+                    <units>Minutes</units>
+                    <description>Measurement interval in minutes.</description>
+                    <applications>
+                        <application>
+                            <name>Stats</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.interval</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Location</name>
+                    <type>DEPENDENT</type>
+                    <key>location</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>Name of the device location.</description>
+                    <inventory_link>LOCATION</inventory_link>
+                    <applications>
+                        <application>
+                            <name>Device info</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.location</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>OTA config [status]</name>
+                    <type>DEPENDENT</type>
+                    <key>otaconfigstatus</key>
+                    <delay>0</delay>
+                    <description>Status of OTA configuration.</description>
+                    <applications>
+                        <application>
+                            <name>Stats</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>IMS-Smart-OTAStatus</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.otaconfigstatus</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Air pressure [Pa]</name>
+                    <type>DEPENDENT</type>
+                    <key>press</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>P</units>
+                    <description>Absolute air pressure in Pascal.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.press</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Restart reason</name>
+                    <type>DEPENDENT</type>
+                    <key>rreason</key>
+                    <delay>0</delay>
+                    <description>Reason for last restart: &#13;
+1=PowerOn / Reset&#13;
+5=DeepSleep&#13;
+15=Brownout</description>
+                    <applications>
+                        <application>
+                            <name>Stats</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>IMS-Smart-RestartReasons</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.rreason</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=15</expression>
+                            <name>[{HOST.NAME}] - Sensor: Brownout detected</name>
+                            <description>Brownout detected. The supply voltage was below the critical threshold and caused the device to reset. This usually means the battery is nearly empty or there are issues with the power supply.</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>WiFi RSSI [dBm]</name>
+                    <type>DEPENDENT</type>
+                    <key>rssi</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>dBm</units>
+                    <description>The received WiFi field strength of the connected access point in dBm.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.rssi</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{nodata(90m)}=1</expression>
+                            <name>[{HOST.NAME}] - Sensor: Missing data [&gt;90Min]</name>
+                            <description>No data since 90 minutes.</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Connect time server [sec]</name>
+                    <type>DEPENDENT</type>
+                    <key>sctime</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>!sec</units>
+                    <description>The time it takes to connect to the Zabbix server.</description>
+                    <applications>
+                        <application>
+                            <name>Stats</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.sctime</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Sensor data</name>
+                    <type>TRAP</type>
+                    <key>sensordata</key>
+                    <delay>0</delay>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>Master item that receives the raw JSON strings.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Serial number</name>
+                    <type>DEPENDENT</type>
+                    <key>serial</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <description>The serial number of the device, which is also part of the MAC address.</description>
+                    <inventory_link>SERIALNO_A</inventory_link>
+                    <applications>
+                        <application>
+                            <name>Stats</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.serial</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Fails: Sensors</name>
+                    <type>DEPENDENT</type>
+                    <key>sfails</key>
+                    <delay>0</delay>
+                    <description>Number of failed readings of any sensor.</description>
+                    <applications>
+                        <application>
+                            <name>Fails</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.sfails</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;0</expression>
+                            <name>[{HOST.NAME}] - Sensor: Sensor reading failed</name>
+                            <description>The last Sensor reading failed.</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Temperature [C]</name>
+                    <type>DEPENDENT</type>
+                    <key>temp</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>C</units>
+                    <description>Temperature in degrees Celsius for the internal sensor.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.temp</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Temperature external [C]</name>
+                    <type>DEPENDENT</type>
+                    <key>tempe</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>C</units>
+                    <description>Temperature in degrees Celsius for the external sensor.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.tempe</params>
+                            <error_handler>DISCARD_VALUE</error_handler>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Error: Temperature external</name>
+                    <type>DEPENDENT</type>
+                    <key>tempeerror</key>
+                    <delay>0</delay>
+                    <description>Number of failed readings of the external temperature sensor.</description>
+                    <applications>
+                        <application>
+                            <name>Fails</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.tempeerror</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Fails: Transmission</name>
+                    <type>DEPENDENT</type>
+                    <key>tfails</key>
+                    <delay>0</delay>
+                    <description>Numer of failed transmission attempts.</description>
+                    <applications>
+                        <application>
+                            <name>Fails</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.tfails</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Total volatile organic compound TVOC [ppb]</name>
+                    <type>DEPENDENT</type>
+                    <key>tvoc</key>
+                    <delay>0</delay>
+                    <units>ppb</units>
+                    <description>TVOC (total volatile organic compound) concentration within a range of 0 to 1187 parts per billion (ppb).</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.tvoc</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Voltage [V]</name>
+                    <type>DEPENDENT</type>
+                    <key>vcc</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>V</units>
+                    <description>Power supply voltage.</description>
+                    <applications>
+                        <application>
+                            <name>Sensor data</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.vcc</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{avg(#4)}&lt;3.0</expression>
+                            <name>[{HOST.NAME}] - Sensor: VCC low [&lt;3.00V]</name>
+                            <description>Current input is below 3V. Power supply or battery is too weak.</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Firmware version</name>
+                    <type>DEPENDENT</type>
+                    <key>version</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <description>Version of the currently installed firmware.</description>
+                    <applications>
+                        <application>
+                            <name>Stats</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.version</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Build information</name>
+                    <type>DEPENDENT</type>
+                    <key>build</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <description>Build information of the currently installed firmware.</description>
+                    <applications>
+                        <application>
+                            <name>Stats</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.build</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Wakeup reason</name>
+                    <type>DEPENDENT</type>
+                    <key>wareason</key>
+                    <delay>0</delay>
+                    <description>Wakeup reason: &#13;
+0=Wakeup by power-on, reset&#13;
+3=Wakeup by modeKey&#13;
+4=Wakeup by timer</description>
+                    <applications>
+                        <application>
+                            <name>Stats</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>IMS-Smart-WakeupReasons</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.wareason</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Connect time WiFi AP [sec]</name>
+                    <type>DEPENDENT</type>
+                    <key>wctime</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>!sec</units>
+                    <description>The time it takes to connect to the WiFi AP.</description>
+                    <applications>
+                        <application>
+                            <name>Stats</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.wctime</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;10</expression>
+                            <name>[{HOST.NAME}] - Sensor: WiFi AP long connection time [&gt;10sec]</name>
+                            <description>WiFi AP has a connection time of over 10 seconds.</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Fails: WiFi</name>
+                    <type>DEPENDENT</type>
+                    <key>wfails</key>
+                    <delay>0</delay>
+                    <description>Number of failed WiFi AP connection attempts.</description>
+                    <applications>
+                        <application>
+                            <name>Fails</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.wfails</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sensordata</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;0</expression>
+                            <name>[{HOST.NAME}] - Sensor: Recent connect to WiFi AP failed</name>
+                            <description>The last connection to WiFi AP failed.</description>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <tags>
+                <tag>
+                    <tag>Contact</tag>
+                    <value>{INVENTORY.CONTACT}</value>
+                </tag>
+                <tag>
+                    <tag>Location</tag>
+                    <value>{INVENTORY.LOCATION}</value>
+                </tag>
+                <tag>
+                    <tag>Type</tag>
+                    <value>Sensor</value>
+                </tag>
+            </tags>
+            <screens>
+                <screen>
+                    <name>IMS-Screen</name>
+                    <hsize>2</hsize>
+                    <vsize>4</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>IMS-Smart Sensor: Temperature graph</name>
+                                <host>IMS-Smart Sensor v1.6</host>
+                            </resource>
+                            <width>600</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>2</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>IMS-Smart Sensor: External temperature graph</name>
+                                <host>IMS-Smart Sensor v1.6</host>
+                            </resource>
+                            <width>600</width>
+                            <height>100</height>
+                            <x>1</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>1</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>IMS-Smart Sensor: Air pressure graph</name>
+                                <host>IMS-Smart Sensor v1.6</host>
+                            </resource>
+                            <width>600</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>1</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>2</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>IMS-Smart Sensor: Humidity graph</name>
+                                <host>IMS-Smart Sensor v1.6</host>
+                            </resource>
+                            <width>600</width>
+                            <height>100</height>
+                            <x>1</x>
+                            <y>1</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>1</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>IMS-Smart Sensor: Total volatile organic compound TVOC graph L</name>
+                                <host>IMS-Smart Sensor v1.6</host>
+                            </resource>
+                            <width>600</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>2</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>2</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>IMS-Smart Sensor: Equivalent carbon-dioxide eCO2 graph</name>
+                                <host>IMS-Smart Sensor v1.6</host>
+                            </resource>
+                            <width>600</width>
+                            <height>100</height>
+                            <x>1</x>
+                            <y>2</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>1</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>IMS-Smart Sensor: Battery charge graph</name>
+                                <host>IMS-Smart Sensor v1.6</host>
+                            </resource>
+                            <width>600</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>3</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>2</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>IMS-Smart Sensor: WiFi RSSI [dBm] graph</name>
+                                <host>IMS-Smart Sensor v1.6</host>
+                            </resource>
+                            <width>600</width>
+                            <height>100</height>
+                            <x>1</x>
+                            <y>3</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>1</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+            </screens>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <expression>{IMS-Smart Sensor v1.6:dew.last()}&gt;{IMS-Smart Sensor v1.6:tempe.last()}</expression>
+            <name>[{HOST.NAME}] - Sensor: Temperature below dew point</name>
+            <priority>HIGH</priority>
+            <description>The dew point is the temperature to which air must be cooled to become saturated with water vapor.&#13;
+The temperature is below that dew point. This means the device is exposed to condensation, which could damage it.</description>
+        </trigger>
+        <trigger>
+            <expression>{IMS-Smart Sensor v1.6:dew.last()}+2&gt;{IMS-Smart Sensor v1.6:temp.last()} or {IMS-Smart Sensor v1.6:dew.last()}+2&gt;{IMS-Smart Sensor v1.6:tempe.last()}</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>{IMS-Smart Sensor v1.6:dew.last()}+3&lt;{IMS-Smart Sensor v1.6:temp.last()} or {IMS-Smart Sensor v1.6:dew.last()}+3&lt;{IMS-Smart Sensor v1.6:tempe.last()}</recovery_expression>
+            <name>[{HOST.NAME}] - Sensor: Temperature near dew point</name>
+            <priority>WARNING</priority>
+            <description>The dew point is the temperature to which air must be cooled to become saturated with water vapor.&#13;
+The temperature is near the dew point. This means the device soon will be exposed to condensation, which could damage it.</description>
+            <manual_close>YES</manual_close>
+        </trigger>
+    </triggers>
+    <graphs>
+        <graph>
+            <name>IMS-Smart Sensor: Air pressure graph</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>FF4000</color>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>press</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: Battery charge graph</name>
+            <height>150</height>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <ymax_type_1>FIXED</ymax_type_1>
+            <graph_items>
+                <graph_item>
+                    <drawtype>FILLED_REGION</drawtype>
+                    <color>FF8A65</color>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>batterycharge</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: Equivalent carbon-dioxide eCO2 graph</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>FFD54F</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>eco2</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: Equivalent carbon-dioxide eCO2 graph L</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>FFD54F</color>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>eco2</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: External temperature graph</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>00FF00</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>tempe</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: Humidity graph</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>00BFFF</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>hum</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: Humidity graph L</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>00BFFF</color>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>hum</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: Temperature graph</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <drawtype>BOLD_LINE</drawtype>
+                    <color>FF0000</color>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>dew</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>00FF00</color>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>temp</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: Total volatile organic compound TVOC graph</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <color>FFD54F</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>tvoc</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: Total volatile organic compound TVOC graph L</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>tvoc</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: WiFi RSSI [dBm] graph</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>CE93D8</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>rssi</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>IMS-Smart Sensor: WiFi RSSI [dBm] graph L</name>
+            <height>150</height>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>CE93D8</color>
+                    <item>
+                        <host>IMS-Smart Sensor v1.6</host>
+                        <key>rssi</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+    <value_maps>
+        <value_map>
+            <name>IMS-Smart-IAQError</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>CCS811_OK</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>CCS811_AVAILIBILITY_FAILED</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>CCS811_READING_FAILED</newvalue>
+                </mapping>
+                <mapping>
+                    <value>3</value>
+                    <newvalue>CCS811_WRONG_VALUE</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+        <value_map>
+            <name>IMS-Smart-IAQErrorStatus</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>SENSOR_SUCCESS</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>SENSOR_ID_ERROR</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>SENSOR_I2C_ERROR</newvalue>
+                </mapping>
+                <mapping>
+                    <value>3</value>
+                    <newvalue>SENSOR_INTERNAL_ERROR</newvalue>
+                </mapping>
+                <mapping>
+                    <value>4</value>
+                    <newvalue>SENSOR_GENERIC_ERROR</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+        <value_map>
+            <name>IMS-Smart-IAQStatus</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>Enabled</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>Disabled</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+        <value_map>
+            <name>IMS-Smart-OTAStatus</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>NO_REQUEST</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>DEACTIVATED</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>NOT_CHANGED</newvalue>
+                </mapping>
+                <mapping>
+                    <value>3</value>
+                    <newvalue>CHANGED</newvalue>
+                </mapping>
+                <mapping>
+                    <value>4</value>
+                    <newvalue>SERVER_UNREACHABLE</newvalue>
+                </mapping>
+                <mapping>
+                    <value>5</value>
+                    <newvalue>NOT_FOUND</newvalue>
+                </mapping>
+                <mapping>
+                    <value>6</value>
+                    <newvalue>ERROR</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+        <value_map>
+            <name>IMS-Smart-RestartReasons</name>
+            <mappings>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>POWERON_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>3</value>
+                    <newvalue>SW_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>4</value>
+                    <newvalue>OWDT_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>5</value>
+                    <newvalue>DEEPSLEEP_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>6</value>
+                    <newvalue>SDIO_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>7</value>
+                    <newvalue>TG0WDT_SYS_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>8</value>
+                    <newvalue>TG1WDT_SYS_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>9</value>
+                    <newvalue>RTCWDT_SYS_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>10</value>
+                    <newvalue>INTRUSION_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>11</value>
+                    <newvalue>TGWDT_CPU_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>12</value>
+                    <newvalue>SW_CPU_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>13</value>
+                    <newvalue>RTCWDT_CPU_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>14</value>
+                    <newvalue>EXT_CPU_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>15</value>
+                    <newvalue>RTCWDT_BROWN_OUT_RESET</newvalue>
+                </mapping>
+                <mapping>
+                    <value>16</value>
+                    <newvalue>RTCWDT_RTC_RESET</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+        <value_map>
+            <name>IMS-Smart-WakeupReasons</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>ESP_SLEEP_WAKEUP_UNDEFINED</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>ESP_SLEEP_WAKEUP_ALL</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>ESP_SLEEP_WAKEUP_EXT0</newvalue>
+                </mapping>
+                <mapping>
+                    <value>3</value>
+                    <newvalue>ESP_SLEEP_WAKEUP_EXT1</newvalue>
+                </mapping>
+                <mapping>
+                    <value>4</value>
+                    <newvalue>ESP_SLEEP_WAKEUP_TIMER</newvalue>
+                </mapping>
+                <mapping>
+                    <value>5</value>
+                    <newvalue>ESP_SLEEP_WAKEUP_TOUCHPAD</newvalue>
+                </mapping>
+                <mapping>
+                    <value>6</value>
+                    <newvalue>ESP_SLEEP_WAKEUP_ULP</newvalue>
+                </mapping>
+                <mapping>
+                    <value>7</value>
+                    <newvalue>ESP_SLEEP_WAKEUP_GPIO</newvalue>
+                </mapping>
+                <mapping>
+                    <value>8</value>
+                    <newvalue>ESP_SLEEP_WAKEUP_UART</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>
